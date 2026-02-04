@@ -66,6 +66,8 @@ func runClean(_ *cobra.Command, _ []string) error {
 		cancel()
 	}()
 
+	out.PrintBanner()
+	out.PrintBanner()
 	out.PrintInfo("Scanning for reclaimable disk space...")
 
 	s, err := scanner.New("")

@@ -85,6 +85,7 @@ func runScan(_ *cobra.Command, _ []string) error {
 	}()
 
 	if !scanJSON {
+		out.PrintBanner()
 		out.PrintInfo("Scanning for reclaimable disk space...")
 	}
 
