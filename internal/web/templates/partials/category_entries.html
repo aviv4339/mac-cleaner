@@ -1,0 +1,24 @@
+{{define "category_entries"}}
+<ul class="space-y-1 text-sm">
+    {{range .Entries}}
+    <li class="flex justify-between text-slate-400">
+        <span class="truncate mr-2" title="{{.Path}}">{{.Description}}</span>
+        <span class="text-slate-500 whitespace-nowrap">{{formatSize .Size}}</span>
+    </li>
+    {{end}}
+</ul>
+{{if and (gt .TotalEntries .ShowCount) (not .Expanded)}}
+<button hx-get="/api/category/{{.CategoryName}}?expanded=true"
+        hx-target="#entries-{{.CategoryName}}" hx-swap="innerHTML"
+        class="text-cyan-400 hover:text-cyan-300 text-xs mt-2 cursor-pointer">
+    Show all {{.TotalEntries}} items
+</button>
+{{end}}
+{{if .Expanded}}
+<button hx-get="/api/category/{{.CategoryName}}?collapsed=true"
+        hx-target="#entries-{{.CategoryName}}" hx-swap="innerHTML"
+        class="text-cyan-400 hover:text-cyan-300 text-xs mt-2 cursor-pointer">
+    Show less
+</button>
+{{end}}
+{{end}}

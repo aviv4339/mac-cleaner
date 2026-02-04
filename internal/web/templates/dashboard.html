@@ -1,0 +1,80 @@
+{{define "content"}}
+<div id="results">
+    {{template "results_section" .}}
+</div>
+{{end}}
+
+{{define "results_section"}}
+<!-- Total + Controls -->
+<div class="bg-slate-800 rounded-lg p-6 mb-6 border border-slate-700">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div>
+            <p class="text-slate-400 text-sm uppercase tracking-wide">Total Reclaimable Space</p>
+            <p class="text-4xl font-bold text-cyan-400">{{formatSize .TotalSize}}</p>
+            <p class="text-slate-500 text-sm">{{.CategoryCount}} categories &middot; {{.EntryCount}} items</p>
+        </div>
+        <div class="flex gap-3 flex-wrap">
+            <button hx-get="/api/scan" hx-target="#results" hx-swap="innerHTML"
+                    hx-indicator="#scan-spinner"
+                    class="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg font-medium transition-colors cursor-pointer">
+                <span id="scan-spinner" class="htmx-indicator">
+                    <svg class="spinner inline w-4 h-4 mr-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v4m0 12v4m10-10h-4M6 12H2m15.07-7.07l-2.83 2.83M9.76 14.24l-2.83 2.83m0-11.32l2.83 2.83m4.48 4.48l2.83 2.83"/>
+                    </svg>
+                </span>
+                Re-scan
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Sort Controls -->
+<div class="flex gap-2 mb-4">
+    <span class="text-slate-400 text-sm self-center mr-2">Sort by:</span>
+    <button hx-get="/api/results?sort=size" hx-target="#results" hx-swap="innerHTML"
+            class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1 rounded text-sm transition-colors cursor-pointer">
+        Size
+    </button>
+    <button hx-get="/api/results?sort=name" hx-target="#results" hx-swap="innerHTML"
+            class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1 rounded text-sm transition-colors cursor-pointer">
+        Name
+    </button>
+    <button hx-get="/api/results?sort=risk" hx-target="#results" hx-swap="innerHTML"
+            class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1 rounded text-sm transition-colors cursor-pointer">
+        Risk
+    </button>
+</div>
+
+<!-- Results Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    {{range .Results}}
+    {{if gt .TotalSize 0}}
+    <div class="bg-slate-800 rounded-lg p-5 border border-slate-700 flex flex-col">
+        <!-- Category header -->
+        <div class="flex items-center justify-between mb-3">
+            <h3 class="text-lg font-semibold text-slate-100">{{.DisplayName}}</h3>
+            <span class="text-xs font-medium px-2 py-0.5 rounded {{riskBgClass .Risk}} {{riskClass .Risk}}">
+                {{riskLabel .Risk}}
+            </span>
+        </div>
+
+        <!-- Size bar -->
+        <div class="mb-3">
+            <div class="flex justify-between text-sm mb-1">
+                <span class="text-slate-400">{{len .Entries}} items</span>
+                <span class="font-medium {{riskClass .Risk}}">{{formatSize .TotalSize}}</span>
+            </div>
+            <div class="w-full bg-slate-700 rounded-full h-2">
+                <div class="h-2 rounded-full {{riskBarClass .Risk}}" style="width: {{barWidth .TotalSize $.MaxSize}}%"></div>
+            </div>
+        </div>
+
+        <!-- Top entries -->
+        <div class="flex-1" id="entries-{{.CategoryName}}">
+            {{template "category_entries" (entriesData . 5 false)}}
+        </div>
+    </div>
+    {{end}}
+    {{end}}
+</div>
+{{end}}

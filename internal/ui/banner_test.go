@@ -15,17 +15,14 @@ func TestPrintBanner(t *testing.T) {
 	output := buf.String()
 
 	// Verify key elements of the banner are present.
-	if !strings.Contains(output, "CORNHOLIO") {
-		t.Error("expected 'CORNHOLIO' in banner output")
-	}
-	if !strings.Contains(output, "BUNGHOLE") {
-		t.Error("expected 'BUNGHOLE' in banner output")
-	}
-	if !strings.Contains(output, "m a c - c l e a n e r") {
-		t.Error("expected 'mac-cleaner' title in banner output")
+	if !strings.Contains(output, "bunghole") {
+		t.Error("expected 'bunghole' in banner output")
 	}
 	if !strings.Contains(output, "disk space") {
 		t.Error("expected 'disk space' tagline in banner output")
+	}
+	if !strings.Contains(output, "██") {
+		t.Error("expected block-letter art in banner output")
 	}
 }
 
@@ -42,28 +39,27 @@ func TestPrintBannerWithColor(t *testing.T) {
 		t.Error("expected ANSI color codes in colored banner")
 	}
 	// Should still contain the text.
-	if !strings.Contains(output, "CORNHOLIO") {
-		t.Error("expected 'CORNHOLIO' in colored banner")
+	if !strings.Contains(output, "bunghole") {
+		t.Error("expected 'bunghole' in colored banner")
 	}
 }
 
 func TestBannerConstant(t *testing.T) {
-	// Verify the ASCII art has reasonable dimensions.
-	lines := splitLines(banner)
-	if len(lines) < 20 {
+	lines := splitLines(Banner)
+	if len(lines) < 10 {
 		t.Errorf("banner seems too short: %d lines", len(lines))
 	}
 
-	// Check that it has the character structure (arms raised).
-	hasArms := false
+	// Check that it has the box-drawing frame.
+	hasBox := false
 	for _, line := range lines {
-		if strings.Contains(line, "/") && strings.Contains(line, "\\") {
-			hasArms = true
+		if strings.Contains(line, "╔") || strings.Contains(line, "╚") {
+			hasBox = true
 			break
 		}
 	}
-	if !hasArms {
-		t.Error("banner ASCII art doesn't appear to have the expected structure")
+	if !hasBox {
+		t.Error("banner doesn't contain expected box-drawing characters")
 	}
 }
 
