@@ -1,0 +1,23 @@
+# Binaries
+bin/
+mac-cleaner
+*.exe
+
+# Build artifacts
+dist/
+coverage.out
+coverage.html
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Go
+vendor/

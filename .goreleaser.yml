@@ -1,0 +1,58 @@
+version: 2
+
+project_name: mac-cleaner
+
+before:
+  hooks:
+    - go mod tidy
+    - go generate ./...
+
+builds:
+  - env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w
+      - -X github.com/aviv4339/mac-cleaner/cmd.Version={{.Version}}
+      - -X github.com/aviv4339/mac-cleaner/cmd.Commit={{.Commit}}
+      - -X github.com/aviv4339/mac-cleaner/cmd.Date={{.Date}}
+
+archives:
+  - format: tar.gz
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- .Os }}_
+      {{- .Arch }}
+
+checksum:
+  name_template: "checksums.txt"
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^ci:"
+      - "^chore:"
+
+brews:
+  - repository:
+      owner: aviv4339
+      name: homebrew-tap
+    directory: Formula
+    homepage: "https://github.com/aviv4339/mac-cleaner"
+    description: "A macOS disk cleanup utility for developers"
+    license: "MIT"
+    test: |
+      system "#{bin}/mac-cleaner", "version"
+    install: |
+      bin.install "mac-cleaner"
